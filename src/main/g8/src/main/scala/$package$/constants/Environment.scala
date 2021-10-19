@@ -8,15 +8,18 @@
 package $package$.constants
 
 object Environment {
+  /** ENV: PORT */
   val __port__ = sys.env
     .get("PORT")
     .flatMap(_.toIntOption)
     .getOrElse(4000)
 
+  /** ENV: RUNTIME_ENV, for checking if running on production */
   val __prod__ = sys.env
     .get("RUNTIME_ENV")
-    .contains("PRODUCTION")
+    .contains("production")
 
+  /** ENV: ENDPOINT, for URI Endpoint for the server */
   val __endpoint__ =
-    (if (__prod__) sys.env("ENDPOINT") else s"http://localhost:\${__port__}") ++ "/graphql"
+    if (__prod__) sys.env("ENDPOINT") else s"http://localhost:\${__port__}"
 }

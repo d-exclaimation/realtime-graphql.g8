@@ -17,6 +17,6 @@ WORKDIR /app
 COPY --from=build /root/target/scala-2.13/*.jar /app.jar
 COPY --from=build /root/.ivy2/cache/org.scala-lang/scala-library/jars/scala-library-2.13.6.jar /scala-library-2.13.6.jar
 
-ENV SCALA_ENV production
+ENV RUNTIME_ENV production
 
 CMD ["java", "-cp", "app.jar:scala-library-2.13.6.jar", "Main"]
