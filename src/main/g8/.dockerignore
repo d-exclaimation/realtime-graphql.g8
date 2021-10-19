@@ -1,0 +1,9 @@
+passphrase.txt
+.gitignore
+.env
+.idea/
+.vscode/
+logs/
+.git/
+*.md
+.cache
