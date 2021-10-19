@@ -49,19 +49,19 @@ object Main extends SprayJsonSupport {
       }
     } ~ path(Remaining) { _ =>
       redirect(
-        uri = s"http://sandbox.apollo.dev/?endpoint=${__endpoint__}",
+        uri = s"http://sandbox.apollo.dev/?endpoint=\${__endpoint__}",
         StatusCodes.PermanentRedirect
       )
     }
   }
 
   def main(args: Array[String]): Unit = {
-    println(s"[akka-http]: Server starting at ${__endpoint__}")
+    println(s"[akka-http]: Server starting at \${__endpoint__}")
     Http()
       .newServerAt("localhost", __port__)
       .bind(route)
       .onComplete {
-        case Failure(exception) => s"[akka-http]: Server stopped due to ${exception.getMessage}"
+        case Failure(exception) => s"[akka-http]: Server stopped due to \${exception.getMessage}"
         case Success(_) => s"[akka-http]: Server finished"
       }
   }

@@ -18,5 +18,5 @@ object Environment {
     .contains("PRODUCTION")
 
   val __endpoint__ =
-    (if (__prod__) sys.env("ENDPOINT") else s"http://localhost:${__port__}") ++ "/graphql"
+    (if (__prod__) sys.env("ENDPOINT") else s"http://localhost:\${__port__}") ++ "/graphql"
 }
