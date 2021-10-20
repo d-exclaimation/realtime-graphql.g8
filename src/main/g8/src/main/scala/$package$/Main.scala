@@ -7,20 +7,7 @@
 
 package $package$
 
-import akka.http.scaladsl.Http
-import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
-import akka.http.scaladsl.model.StatusCodes
-import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.server.Route
-import $package$.services.Counter
-import $package$.constants.Environment.{__endpoint__, __port__}
-import $package$.constants.Config
-import $package$.implicits.Implicits._
-import $package$.schema.{Mutation, Query, Subscription}
-import io.github.dexclaimation.ahql.Ahql
-import io.github.dexclaimation.overlayer.OverTransportLayer
-import io.github.dexclaimation.soda.core.SchemaDefinition.makeSchema
-
+import scala.concurrent.duration.DurationInt
 import scala.util.{Failure, Success}
 
 object Main extends SprayJsonSupport {
@@ -66,13 +53,15 @@ object Main extends SprayJsonSupport {
   }
 
   def main(args: Array[String]): Unit = {
-    println(s"[akka-http]: Server starting at \${__endpoint__}")
     Http()
       .newServerAt("localhost", __port__)
       .bind(route)
+      .map(_.addToCoordinatedShutdown(10.seconds))
       .onComplete {
-        case Failure(exception) => s"[akka-http]: Server stopped due to \${exception.getMessage}"
-        case Success(_) => s"[akka-http]: Server finished"
+        case Failure(exception) =>
+          println(s"[info]: Server stopped due to \${exception.getMessage}")
+        case Success(_) =>
+          println(s"[info]: Server starting at \${__endpoint__}")
       }
   }
 }
