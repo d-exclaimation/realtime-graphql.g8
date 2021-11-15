@@ -5,7 +5,7 @@ COPY project project
 COPY build.sbt .
 RUN sbt update
 
-# Build jar
+# Build project jar
 COPY . .
 RUN sbt clean assembly
 
@@ -13,9 +13,11 @@ FROM openjdk:18-jdk-alpine3.13
 
 WORKDIR /app
 
-# Get the jars
-COPY --from=build /root/target/scala-2.13/*.jar /app.jar
+# Get the assembled jar and renamed to generic "app"
+COPY --from=build /root/target/scala-2.13/*assembly*.jar /app/app.jar
 
+# Set any constant environment variables i.e. RUNTIME_ENV, PORT, DATABASE_URL, etc.
 ENV RUNTIME_ENV production
 
+# Run the assembled jar file
 CMD ["java", "-jar", "app.jar"]
