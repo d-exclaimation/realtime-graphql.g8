@@ -21,5 +21,6 @@ object Environment {
 
   /** ENV: ENDPOINT, for URI Endpoint for the server */
   val __endpoint__ =
-    if (__prod__) sys.env("ENDPOINT") else s"http://localhost:\${__port__}"
+    if (__prod__) sys.env.getOrElse("ENDPOINT", s"http://localhost:${__port__}") 
+    else s"http://localhost:${__port__}"
 }
