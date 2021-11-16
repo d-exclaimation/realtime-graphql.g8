@@ -7,8 +7,21 @@
 
 package $package$
 
-import scala.concurrent.duration.DurationInt
-import scala.util.{Failure, Success}
+import akka.http.scaladsl.Http
+import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
+import akka.http.scaladsl.model.StatusCodes
+import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.server.Route
+import ch.megard.akka.http.cors.scaladsl.CorsDirectives.cors
+import $package$.constants.Config
+import $package$.constants.Environment.{__endpoint__, __port__, __prod__}
+import $package$.implicits.Implicits._
+import $package$.schema.{Mutation, Query, Subscription}
+import $package$.services.Counter
+import io.github.dexclaimation.ahql.Ahql
+import io.github.dexclaimation.ahql.utils.HttpMethodStrategy
+import io.github.dexclaimation.overlayer.OverTransportLayer
+import io.github.dexclaimation.soda.core.SchemaDefinition.makeSchema
 
 object Main extends SprayJsonSupport {
 
@@ -17,11 +30,15 @@ object Main extends SprayJsonSupport {
 
   /** GraphQL HTTP Server from Ahql */
   val gqlServer = Ahql.createServer(schema, (),
-    httpMethodStrategy = HttpMethodStrategy.queryOnlyGet
+    httpMethodStrategy = HttpMethodStrategy.queryOnlyGet,
+    queryReducers = Config.reducers
   )
 
   /** GraphQL Websocket Transport from OverLayer */
-  val gqlTransport = OverTransportLayer(schema, ())
+  val gqlTransport = OverTransportLayer(schema, (),
+    queryReducers = Config.reducers
+  )
+
 
   /** Singleton context */
   val counter = new Counter()
